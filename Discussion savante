@@ -1,0 +1,39 @@
+import requests
+
+S = requests.Session()
+
+URL = "https://en.wikipedia.org/w/api.php"
+
+PARAMS = {
+    "action": "query",
+    "meta": "tokens",
+    "type": "login",
+    "format": "json"
+}
+
+R = S.get(url=URL, params=PARAMS)
+DATA = R.json()
+
+LOGIN_TOKEN = DATA['query']['tokens']['logintoken']
+
+PARAMS = {
+    "action": "login",
+    "lgname": "<username>",
+    "lgpassword": "<password>",
+    "lgtoken": LOGIN_TOKEN,
+    "format": "json"
+}
+
+R = S.post(URL, data=PARAMS)
+DATA = R.json()
+
+PARAMS = {
+    "action": "query",
+    "meta": "tokens",
+    "format": "json"
+}
+
+R = S.get(url=URL, params=PARAMS)
+DATA = R.json()
+
+API_KEY = DATA['query']['tokens']['csrftoken']
