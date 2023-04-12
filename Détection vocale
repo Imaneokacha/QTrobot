@@ -1,3 +1,6 @@
+import pyttsx3
+
+
 from tuning import Tuning
 import usb.core
 import usb.util
@@ -5,6 +8,13 @@ import time
 import sys
 import rospy
 from std_msgs.msg import Float64MultiArray
+ 
+# initialiser le moteur de synthèse vocale
+engine = pyttsx3.init()
+
+# faire dire au robot "Bonjour, tu veux faire une recherche ?"
+engine.say("Bonjour, tu veux faire une recherche ?")
+
 
 # microphone orientation
 MICROPHONE_ANGLE_OFFSET = 90
