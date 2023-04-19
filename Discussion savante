@@ -1,0 +1,43 @@
+#!/usr/bin/env python
+import sys
+import rospy
+from qt_gesture_controller.srv import gesture_play
+from qt_nuitrack_app.msg import Gestures
+from std_msgs.msg import String
+from qt_robot_interface.srv import *
+from qt_robot_interface.srv import *
+from qt_speech_to_text.srv import *
+import random
+
+def Talk(text):
+    behaviorTalkText_pub.publish(text)
+    gesturePlay_pub.publish("QT/happy")
+    emotionShow_pub.publish("QT/happy")
+    
+def speechToText():
+    rospy.wait_for_service('/qt_robot/speech_to_text/recognize')
+    try:
+        recognize = rospy.ServiceProxy('/qt_robot/speech_to_text/recognize', speech_to_text)
+        response = recognize()
+        return response.text
+    except rospy.ServiceException as e:
+        rospy.logerr("Service call failed: %s" % e)
+        return ""
+
+if __name__ == '__main__':
+    
+    # Initialisation du noeud ROS
+    rospy.init_node('qt_robot_speech')
+    rospy.loginfo("Hi") 
+    print(speechToText())
+    Talk("Bonjour! Tu veux faire une recherche? ")
+    if speechToText()=="oui":
+        Talk("Donne moi des mots clés")
+    try:
+        
+        #The code is repeated until the user taps ctrl+C 
+        rospy.spin()
+    except KeyboardInterrupt:
+        pass
+    
+    rospy.loginfo("A la prochaine!")
