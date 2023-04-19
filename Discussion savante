@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+pip3 install SpeechRecognition
+
 import sys
 import rospy
 from qt_gesture_controller.srv import gesture_play
@@ -6,8 +8,7 @@ from qt_nuitrack_app.msg import Gestures
 from std_msgs.msg import String
 from qt_robot_interface.srv import *
 from qt_robot_interface.srv import *
-from qt_speech_to_text.srv import *
-import random
+import speech_recognition
 
 def Talk(text):
     behaviorTalkText_pub.publish(text)
@@ -15,14 +16,29 @@ def Talk(text):
     emotionShow_pub.publish("QT/happy")
     
 def speechToText():
-    rospy.wait_for_service('/qt_robot/speech_to_text/recognize')
+    recognizer = speech_recognition.Recognizer()
+    with speech_recognition.Microphone() as source:
+        recognizer.adjust_for_ambient_noise(source)
+        audio = recognizer.listen(source)
+
     try:
-        recognize = rospy.ServiceProxy('/qt_robot/speech_to_text/recognize', speech_to_text)
-        response = recognize()
-        return response.text
-    except rospy.ServiceException as e:
-        rospy.logerr("Service call failed: %s" % e)
-        return ""
+        return recognizer.recognize_sphinx(audio) 
+        # or: return recognizer.recognize_google(audio)
+    except speech_recognition.UnknownValueError:
+        print("Could not understand audio")
+    except speech_recognition.RequestError as e:
+        print("Recog Error; {0}".format(e))
+
+    return ""
+
+    # rospy.wait_for_service('/qt_robot/speech_to_text/recognize')
+    # try:
+    #     recognize = rospy.ServiceProxy('/qt_robot/speech_to_text/recognize', speech_to_text)
+    #     response = recognize()
+    #     return response.text
+    # except rospy.ServiceException as e:
+    #     rospy.logerr("Service call failed: %s" % e)
+    #     return ""
 
 if __name__ == '__main__':
     
