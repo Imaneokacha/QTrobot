@@ -1,54 +1,40 @@
 #!/usr/bin/env python
-pip3 install SpeechRecognition
 
 import sys
 import rospy
-from qt_gesture_controller.srv import gesture_play
-from qt_nuitrack_app.msg import Gestures
-from std_msgs.msg import String
 from qt_robot_interface.srv import *
-from qt_robot_interface.srv import *
-import speech_recognition
-
-def Talk(text):
-    behaviorTalkText_pub.publish(text)
-    gesturePlay_pub.publish("QT/happy")
-    emotionShow_pub.publish("QT/happy")
-    
-def speechToText():
-    recognizer = speech_recognition.Recognizer()
-    with speech_recognition.Microphone() as source:
-        recognizer.adjust_for_ambient_noise(source)
-        audio = recognizer.listen(source)
-
-    try:
-        return recognizer.recognize_sphinx(audio) 
-        # or: return recognizer.recognize_google(audio)
-    except speech_recognition.UnknownValueError:
-        print("Could not understand audio")
-    except speech_recognition.RequestError as e:
-        print("Recog Error; {0}".format(e))
-
-    return ""
-
-    # rospy.wait_for_service('/qt_robot/speech_to_text/recognize')
-    # try:
-    #     recognize = rospy.ServiceProxy('/qt_robot/speech_to_text/recognize', speech_to_text)
-    #     response = recognize()
-    #     return response.text
-    # except rospy.ServiceException as e:
-    #     rospy.logerr("Service call failed: %s" % e)
-    #     return ""
+from qt_vosk_app.srv import *
+import wikipedia
 
 if __name__ == '__main__':
     
     # Initialisation du noeud ROS
     rospy.init_node('qt_robot_speech')
     rospy.loginfo("Hi") 
-    print(speechToText())
-    Talk("Bonjour! Tu veux faire une recherche? ")
-    if speechToText()=="oui":
-        Talk("Donne moi des mots clés")
+    
+    speechSay = rospy.ServiceProxy('/qt_robot/speech/say', speech_say)
+    recognize = rospy.ServiceProxy('/qt_robot/speech/recognize', speech_recognize)
+    rospy.wait_for_service('/qt_robot/speech/say')
+    rospy.wait_for_service('/qt_robot/speech/recognize')
+
+
+    speechSay("Bonjour! Tu veux faire une recherche? ")
+    resp = recognize("fr_FR", [], 0)
+    print(resp.transcript)
+    rospy.loginfo("I got: %s", resp.transcript)
+    if resp.transcript == "oui":
+        speechSay("Donne moi un mot clé")
+        key_word = recognize("fr_FR", [], 0).transcript
+        demande = key_word
+        wikipedia.set_lang("fr")
+        liste_recherche = wikipedia.search(demande)
+        recherche = liste_recherche[0]
+
+        # finding result for the search
+        # sentences = 2 refers to numbers of line
+        result = wikipedia.summary(recherche, sentences = 4, auto_suggest=False)
+        speechSay("Voici ce que j'ai trouvé sur wikipedia: %s ", result)
+
     try:
         
         #The code is repeated until the user taps ctrl+C 
@@ -56,4 +42,4 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         pass
     
-    rospy.loginfo("A la prochaine!")
+    rospy.loginfo("Finished!")
