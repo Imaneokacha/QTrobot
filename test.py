@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#!/usr/bin/env python
+
 import sys
 import rospy
 from qt_robot_interface.srv import *
