@@ -23,7 +23,11 @@ if __name__ == '__main__':
     resp = recognize("fr_FR", [], 0)
     print(resp.transcript)
     rospy.loginfo("I got: %s", resp.transcript)
-    speechSay("Tu as dis: %s " % resp.transcript)
+    if resp.transcript == "oui":
+        speechSay("Donne moi un mot clé")
+        key_word = recognize("fr_FR", [], 0).transcript
+        result = 
+        speechSay("Voici ce que j'ai trouvé sur wikipedia: %s ", result)
 
     try:
         
