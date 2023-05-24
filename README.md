@@ -4,7 +4,8 @@ This repository is a collaborative project developed by a group of 4 students fr
 * Random Moves  
 * Wikipedia Search  
 * Follow user  
-This 
+These functionalities contribute to creating a more immersive and interactive experience with QTrobot, fostering a sense of natural interaction and reducing the perception of robotic behavior.
+## Launching a function
 ## Contributors
 Victoria ANDRE  
 Maissa BEJI  
