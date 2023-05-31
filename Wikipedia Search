@@ -2,44 +2,76 @@
 
 import sys
 import rospy
-from qt_robot_interface.srv import *
+from qt_robot_interface.srv import *  # Importing necessary service modules
 from qt_vosk_app.srv import *
-import wikipedia
+import wikipediaapi  # Library for interacting with Wikipedia
+from audio_common_msgs.msg import AudioData
+
+
+def search_wikipedia(key_word):
+    # Create an instance of WikipediaAPI for the French language
+    wiki = wikipediaapi.Wikipedia('fr')
+    page = wiki.page(key_word)
+    
+    if page.exists():
+        summary = page.summary  # Full summary of the page
+
+        # Split the summary into sentences using punctuation
+        sentences = []
+        current_sentence = ""
+        punctuations = {".", "!", "?"}  # Common punctuations to end a sentence
+
+        for char in summary:
+            current_sentence += char
+            if char in punctuations:
+                sentences.append(current_sentence.strip())
+                current_sentence = ""
+
+        # Limit the number of sentences
+        max_sentences = 4
+        selected_sentences = sentences[:max_sentences]
+
+        result = ' '.join(selected_sentences)  # Combine the sentences into a single text
+        return result
+    else:
+        return None
+
 
 if __name__ == '__main__':
-    
-    # Initialisation du noeud ROS
+    # ROS node initialization
     rospy.init_node('qt_robot_speech')
     rospy.loginfo("Hi") 
-    
+
     speechSay = rospy.ServiceProxy('/qt_robot/speech/say', speech_say)
     recognize = rospy.ServiceProxy('/qt_robot/speech/recognize', speech_recognize)
     rospy.wait_for_service('/qt_robot/speech/say')
     rospy.wait_for_service('/qt_robot/speech/recognize')
+   
+    # Main loop for performing multiple searches
+    while True:
+        # Ask the user if they want to perform a search
+        speechSay("Bonjour ! Tu veux faire une recherche ? ")
+        resp = recognize("fr_FR", [], 0)
+        rospy.loginfo(resp.transcript)
+        rospy.loginfo("I got: %s", resp.transcript)
 
+        if "d'accord" in resp.transcript:
+            # Ask for the keyword to search
+            speechSay("Donne-moi un mot clé")
+            resp_kw = recognize("fr_FR", [], 15)
+            key_word = resp_kw.transcript
+            rospy.loginfo(key_word)
 
-    speechSay("Bonjour! Tu veux faire une recherche? ")
-    resp = recognize("fr_FR", [], 0)
-    print(resp.transcript)
-    rospy.loginfo("I got: %s", resp.transcript)
-    if resp.transcript == "oui":
-        speechSay("Donne moi un mot clé")
-        key_word = recognize("fr_FR", [], 0).transcript
-        demande = key_word
-        wikipedia.set_lang("fr")
-        liste_recherche = wikipedia.search(demande)
-        recherche = liste_recherche[0]
+            # Perform the search on Wikipedia
+            result = search_wikipedia(key_word)
+            if result is not None:
+                print(result)
+                speechSay("Voici ce que j'ai trouvé sur Wikipedia : {}".format(result))
+            else:
+                speechSay("Aucun résultat trouvé sur Wikipedia pour la recherche : {}".format(key_word))
+        else:
+            # If the user indicates they don't want to perform a search, break out of the loop
+            break
 
-        # finding result for the search
-        # sentences = 2 refers to numbers of line
-        result = wikipedia.summary(recherche, sentences = 4, auto_suggest=False)
-        speechSay("Voici ce que j'ai trouvé sur wikipedia: %s ", result)
-
-    try:
-        
-        #The code is repeated until the user taps ctrl+C 
-        rospy.spin()
-    except KeyboardInterrupt:
-        pass
-    
     rospy.loginfo("Finished!")
+
