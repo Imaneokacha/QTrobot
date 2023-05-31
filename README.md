@@ -20,9 +20,5 @@ If you don't know the node name, you can find it in the script where rospy.init_
 ## Contributors
 Victoria ANDRE  
 Maissa BEJI  
-Imane OKACHA  
-Gabriel CHASTANET
-
-
-
-
+Gabriel CHASTANET  
+Imane OKACHA 
