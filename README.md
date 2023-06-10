@@ -1,5 +1,8 @@
 # QTrobot
 QTrobot is a humanoid robot created by LuxAI S.A. It has been employed for diverse applications, including emotional training for children with autism.  
+![](https://imgur.com/9sc6CwK)  
+
+
 This repository is a collaborative project developed by a group of 4 students from IMT Atlantique. The objective of this project is to improve the interaction between the robot and the user by implementing three functions :   
 * Random Moves  
 This function generates random movements of the robot's head and arms at different levels of speed, in order to provide an engaging interaction. By varying the code, the robot can perform movements with different velocities.
