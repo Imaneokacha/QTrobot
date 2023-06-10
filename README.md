@@ -10,7 +10,7 @@ This function generates random movements of the robot's head and arms at differe
 This function allows the robot to perform searches in Wikipedia. It utilizes speech recognition to extract keywords, performs the search, and provides a summary of the article that the robot can read to the user. 
 * Follow user  
 By utilizing sound localization techniques, the robot can accurately determine the direction of the user's voice and rotate its head towards the speaker. The motor HeadYaw is moving in order to follow the user's position.
-![a](https://i.imgur.com/9sc6CwK.jpg)  
+![a](https://i.imgur.com/qUb16bv.jpg)  
 
 Finally, the Global Function integrates the functionalities of Wikipedia search, random moves, and follow user. It enables the robot to perform Wikipedia searches while simultaneously executing random movements and tracking the user's direction. 
 These functionalities contribute to creating a more immersive and interactive experience with QTrobot, fostering a sense of natural interaction and reducing the perception of robotic behavior.  
