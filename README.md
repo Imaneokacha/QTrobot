@@ -14,7 +14,8 @@ By utilizing sound localization techniques, the robot can accurately determine t
 
 Finally, the Global Function integrates the functionalities of Wikipedia search, random moves, and follow user. It enables the robot to perform Wikipedia searches while simultaneously executing random movements and tracking the user's direction. 
 These functionalities contribute to creating a more immersive and interactive experience with QTrobot, fostering a sense of natural interaction and reducing the perception of robotic behavior.  
-For a demonstration of these functionalities in action, here is the link to the video: https://youtu.be/HgkzYq131vg
+For a demonstration of these functionalities in action, here is the link to the video: [![Demonstration video](https://img.youtube.com/vi/HgkzYq131vg/0.jpg)](https://youtu.be/HgkzYq131vg)
+
 
 ## Launching a function
 * Place the Python file in the following directory : catkin_ws/src  
